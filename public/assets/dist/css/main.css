@@ -1,0 +1,95 @@
+.table-loader {
+    visibility: hidden;
+}
+
+.table-loader:before {
+    visibility: visible;
+    display: table-caption;
+    content: " ";
+    width: 100%;
+    height: 300px;
+    background-image: linear-gradient(rgba(235, 235, 235, 1) 1px, transparent 0),
+        linear-gradient(90deg, rgba(235, 235, 235, 1) 1px, transparent 0),
+        linear-gradient(90deg,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.5) 15%,
+            rgba(255, 255, 255, 0) 30%),
+        linear-gradient(rgba(240, 240, 242, 1) 35px, transparent 0);
+
+    background-repeat: repeat;
+
+    background-size: 1px 35px, calc(100% * 0.1666666666) 1px, 30% 100%, 2px 70px;
+
+    background-position: 0 0, 0 0, 0 0, 0 0;
+
+    animation: shine 0.5s infinite;
+}
+
+@keyframes shine {
+    to {
+        background-position: 0 0, 0 0, 40% 0, 0 0;
+    }
+}
+
+
+.page-wrapper .page-header {
+    margin: 10px 0 0 !important;
+}
+
+.page-body {
+    margin-top: 10px !important;
+}
+
+.card-header {
+    padding: 13px var(--tblr-card-cap-padding-x) !important;
+}
+
+.table>:not(caption)>*>* {
+    padding: 0.53rem .75rem !important;
+}
+
+.navbar-nav .dropdown-menu {
+    transition: ease-in-out 0.2s;
+
+}
+
+/* .navbar-nav .dropdown-menu {
+    display: flex;
+    border-radius: 9px !important;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-box-shadow: 0 1px 10px 0 rgba(69, 90, 100, 0.2) !important;
+    box-shadow: 0 1px 10px 0 rgba(69, 90, 100, 0.2) !important;
+    -webkit-transform: translateY(15px);
+    transform: translateY(16px);
+    transition: transform 0.32s cubic-bezier(0, 0, 0, 1), opacity 80ms;
+    transition: transform 0.32s cubic-bezier(0, 0, 0, 1), opacity 80ms, -webkit-transform 0.32s cubic-bezier(0, 0, 0, 1);
+} */
+
+.navbar-nav .show.dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
+
+.dropend .dropdown-item {
+    width: unset !important;
+}
+
+.dropdown-menu {
+    top: 100%;
+    left: 0;
+    margin-top: var(--tblr-dropdown-spacer);
+}
+
+.dropdown-item {
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    color: var(--tblr-dropdown-link-hover-color);
+    text-decoration: none;
+    transform: scale(1.09);
+}
