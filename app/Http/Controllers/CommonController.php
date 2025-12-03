@@ -194,4 +194,11 @@ class CommonController extends Controller
         session(['branch_id' => $branch->id]);
         return true;
     }
+
+    public function index()
+    {
+        $categories = DB::table('item_categories')->get();
+        $item = DB::table('items')->join('item_categories', 'item_categories.id', '=', 'items.categories_id')->get();
+        return response()->json(['categories' => $categories, 'product' => $item]);
+    }
 }

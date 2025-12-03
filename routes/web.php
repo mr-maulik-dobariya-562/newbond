@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Artisan;
 
 /* Common Routes */
 
-Route::get('testing', [CommonController::class, 'testing'])->name('testing');
+Route::get('api', [CommonController::class, 'index'])->name('api');
 Route::get('/quotation-print', function () {
     return view('order/quotation_print');
 });
