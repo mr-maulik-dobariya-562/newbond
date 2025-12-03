@@ -46,7 +46,7 @@
 @section("content")
 	<div class="row">
 		<div class="col-md-12">
-			<div class="card">
+			<!-- <div class="card">
 				<div class="card-status-top bg-primary"></div>
 				<div class="mt-3 p-2">
 					<div class="card-body">
@@ -86,7 +86,7 @@
 						<button type="button" class="btn btn-outline-primary float-end" id="search">Search</button>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="card mt-2">
 				<div class="card-status-top bg-primary"></div>
 				<div class="card-body">
@@ -102,18 +102,7 @@
 											<th data-name="name" style="min-width: 200px;">Name</th>
 											<th data-name="image">Image</th>
 											<th data-name="categories">Categories</th>
-											<th data-name="extra_retail_discount">Extra Retail Discount</th>
-											<th data-name="extra_dealer_discount">Extra Dealer Discount</th>
-											<th data-name="type">Type</th>
-											<th data-name="active_type">Active Type</th>
-											<th data-name="packing">Packing</th>
-											<th data-name="minimum_qty">Minimum Qty</th>
-											<th data-name="dealer_current_price">Dealer Current Price</th>
-											<th data-name="retail_current_price">Retail Current Price</th>
-											<th data-name="usd_current_price">USA Current Price</th>
-											<th data-name="dealer_old_price">Dealer Old Price</th>
-											<th data-name="retail_old_price">Retail Old Price</th>
-											<th data-name="usd_old_price">USD Old Price</th>
+											<th data-name="price">Price</th>
 											<th data-name="created_by">Created By</th>
 											<th data-name="created_at">Created At</th>
 											<th data-name="updated_at">Last Update At</th>
@@ -129,7 +118,7 @@
 			</div>
 		</div>
 	</div>
-	<form id="modal-form" action="{{ route('item-master.item.store') }}" enctype="multipart/form-data" method="POST">
+	<form id="modal-form" action="{{ route('master.item.store') }}" enctype="multipart/form-data" method="POST">
 		@csrf
 		<div class="modal modal-blur fade pt-5" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog modal-full-width modal-dialog-scrollable" role="document">
@@ -159,7 +148,7 @@
 			const modal = $("#modal");
 			var table = window.table(
 				"#datatable",
-				"{{ route('item-master.item.getList') }}", {
+				"{{ route('master.item.getList') }}", {
 				override: {
 					responsive: false
 				},
@@ -168,8 +157,6 @@
 					return {
 						_token: "{{ csrf_token() }}",
 						categories: $('#categories').val() || [],
-						activeType: $('#activeType').val() || '',
-						itemType: $('#itemType').val() || '',
 					}
 				}
 			},
@@ -187,31 +174,19 @@
 			$(".add-new-btn").click(function () {
 				$("#results").html('');
 				$.ajax({
-					url: "{{ route('item-master.item.model') }}",
+					url: "{{ route('master.item.model') }}",
 					cache: false,
 					type: "POST",
 					success: function (html) {
 						$("#results").html(html);
-						$('#itemType').select2({
-							dropdownParent: $('#modal'),
-						});
-						$('.size').select2({
-							dropdownParent: $('#modal'),
-						});
-						$('#activeType').select2({
-							dropdownParent: $('#modal'),
-						});
 						$('#categories').select2({
 							dropdownParent: $('#modal'),
 						});
 						window.mainRow = $('.mainRow')[0].outerHTML;
-						$('.print-type').select2({
-							width: "100%",
-						});
 					}
 				});
 				modal.find(".title").text("Add");
-				modal.parents("form").attr("action", '{{ route("item-master.item.store") }}');
+				modal.parents("form").attr("action", '{{ route("master.item.store") }}');
 				window.edit = false;
 			});
 
@@ -264,7 +239,7 @@
 				const id = $(this).data("id");
 				const permission = $(this).data("permission");
 				$.ajax({
-					url: "{{ route('item-master.item.model') }}",
+					url: "{{ route('master.item.model') }}",
 					cache: false,
 					type: "POST",
 					data: {
@@ -272,15 +247,6 @@
 					},
 					success: function (html) {
 						$("#results").html(html);
-						$('#itemType').select2({
-							dropdownParent: $('#modal'),
-						});
-						$('#activeType').select2({
-							dropdownParent: $('#modal'),
-						});
-						$('.size').select2({
-							dropdownParent: $('#modal'),
-						});
 						$('#categories').select2({
 							dropdownParent: $('#modal'),
 						});
@@ -289,42 +255,12 @@
 						}
 					}
 				});
-				const edit_url = "{{ route('item-master.item.update', ':id') }}";
+				const edit_url = "{{ route('master.item.update', ':id') }}";
 				modal.parents("form").attr("action", edit_url.replace(":id", id));
 				modal.find(".title").text("Edit");
 				modal.modal("show");
 				window.edit = true;
 			})
-		});
-	</script>
-	<script>
-		$(document).ready(function () {
-			$(document).on('click', '.addButton', function () {
-				var mainRow = window.mainRow;
-				var lastGroupSelected = $('.append-here tr').last().find('.print-type').val();
-				if (lastGroupSelected === null || lastGroupSelected === "") {
-					sweetAlert("error", 'Please select above all field before adding a new row.');
-					return false;
-				}
-				$(".append-here").append(mainRow);
-				var lastTr = $('.append-here tr').last();
-				lastTr.find('.unit,.rate,.qty,.remarks,.vat,.drawar,.print-type').val('');
-				lastTr.find('.print-type').append('<option val="">Select</option>');
-				lastTr.find('.print-type').select2({
-					width: "100%",
-				});
-			});
-
-			$(document).on('click', '.remove-btn', function () {
-				var $row = $(this).closest('tr');
-				var $tbody = $row.closest('tbody');
-
-				if ($tbody.find('tr').length > 1) {
-					$row.remove();
-				} else {
-					sweetAlert("error", 'Last row cannot be deleted.');
-				}
-			});
 		});
 	</script>
 	<script>

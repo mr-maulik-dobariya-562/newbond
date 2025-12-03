@@ -77,7 +77,7 @@
                                 <thead>
                                     <tr>
                                         <th data-name="id">Serial No </th>
-                                        <th data-name="name">Title</th>
+                                        <th data-name="name">Name</th>
                                         <th data-name="created_by">Created By</th>
                                         <th data-name="created_at">Created At</th>
                                         <th data-name="updated_at">Last Update At</th>

@@ -15,26 +15,9 @@ class Item extends BaseModel
     protected $fillable = [
         'name',
         'categories_id',
-        'extra_retail_discount',
-        'extra_dealer_discount',
-        'dealer_current_price',
-        'retail_current_price',
-        'usd_current_price',
-        'dealer_old_price',
-        'retail_old_price',
-        'usd_old_price',
-        'local_size_id',
-        'export_size_id',
-        'export_weight',
-        'local_weight',
-        'minimum_qty',
-        'packing',
-        'type',
-        'active_type',
-        "cartoon_type",
+        'price',
         'image',
         'created_by',
-        "branch_id",
     ];
 
     public function itemDetails()

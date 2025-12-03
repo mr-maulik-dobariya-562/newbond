@@ -95,7 +95,7 @@ class ItemCategoryController extends Controller implements HasMiddleware
         $editPermission   = $this->hasPermission("item_category-edit");
         $deletePermission = $this->hasPermission("item_category-delete");
         $this->formateArray(function ($row, $index) use ($editPermission, $deletePermission) {
-            $delete = route("item-master.item-category.delete", ['itemCategory' => $row->id]);
+            $delete = route("master.item-category.delete", ['itemCategory' => $row->id]);
             $action = "";
             $image = $row->image ? $row->viewUrl : "";
             if ($editPermission) {

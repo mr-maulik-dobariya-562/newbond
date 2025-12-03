@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Masters;
 
 use App\Http\Controllers\Controller;
+use App\Models\Item;
 use App\Models\ItemCategory;
 use App\Traits\DataTable;
 use Illuminate\Http\Request;
@@ -38,22 +39,9 @@ class ItemController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         $validated = $request->validate([
-            "name"                  => "required|string|max:255|unique:items,name",
+            "name"                  => "required|string|max:255",
             "categories_id"         => "required|string|max:255",
-            "extra_retail_discount" => "required|numeric",
-            "extra_dealer_discount" => "required|numeric",
-            "dealer_current_price"  => "required|numeric",
-            "retail_current_price"  => "required|numeric",
-            "usd_current_price"  => "required|numeric",
-            "dealer_old_price"      => "required|numeric",
-            "retail_old_price"      => "required|numeric",
-            "usd_old_price"      => "required|numeric",
-            "minimum_qty"           => "required|integer",
-            "packing"               => "required|string|max:255",
-            "type"                  => "required|in:Finish,Raw,Semi-Finished",
-            "active_type"           => "required|in:Active,Non Active,Offline",
-            "print_type_id"            => "required|array",
-            "print_type_id.*"          => "required|integer",
+            "price"                 => "nullable|numeric",
         ]);
 
         if ($request->hasFile('image')) {
@@ -63,38 +51,10 @@ class ItemController extends Controller implements HasMiddleware
         $item = Item::create([
             "name"                  => $request->name,
             "categories_id"         => $request->categories_id,
-            "extra_retail_discount" => $request->extra_retail_discount,
-            "extra_dealer_discount" => $request->extra_dealer_discount,
-            "dealer_current_price"  => $request->dealer_current_price,
-            "retail_current_price"  => $request->retail_current_price,
-            "usd_current_price"     => $request->usd_current_price,
-            "dealer_old_price"      => $request->dealer_old_price,
-            "retail_old_price"      => $request->retail_old_price,
-            "usd_old_price"         => $request->usd_old_price,
-            'local_size_id'         => $request->local_size_id,
-            'export_size_id'        => $request->export_size_id,
-            'export_weight'         => $request->export_weight,
-            'local_weight'          => $request->local_weight,
-            "minimum_qty"           => $request->minimum_qty,
-            "packing"               => $request->packing,
-            "type"                  => $request->type,
-            "active_type"           => $request->active_type,
+            "price"                 => $request->price,
             "image"                 => $image ?? null,
             "created_by"            => auth()->id()
         ]);
-
-        $lastInsertedId = $item->id;
-
-        // Handle array inputs
-        foreach ($validated['print_type_id'] as $index => $item) {
-            // Assuming you have a relationship defined on the ItemGroup model to handle these arrays
-            ItemDetail::create([
-                'item_id'       => $lastInsertedId,
-                'print_type_id' => $item,
-                'checkbox'      => isset($request->checkbox[$index]) && $request->checkbox[$index] ? '1' : '0',
-                "created_by"    => auth()->id()
-            ]);
-        }
 
         if ($request->ajax()) {
             return $this->withSuccess("Item created successfully");
@@ -110,20 +70,7 @@ class ItemController extends Controller implements HasMiddleware
         $validated = $request->validate([
             "name"                  => "required|string|max:255|unique:items,name," . $item->id,
             "categories_id"         => "required|string|max:255",
-            "extra_retail_discount" => "required|numeric",
-            "extra_dealer_discount" => "required|numeric",
-            "dealer_current_price"  => "required|numeric",
-            "retail_current_price"  => "required|numeric",
-            "usd_current_price"     => "required|numeric",
-            "dealer_old_price"      => "required|numeric",
-            "retail_old_price"      => "required|numeric",
-            "usd_old_price"         => "required|numeric",
-            "minimum_qty"           => "required|integer",
-            "packing"               => "required|string|max:255",
-            "type"                  => "required|in:Finish,Raw,Semi-Finished",
-            "active_type"           => "required|in:Active,Non Active,Offline",
-            "print_type_id"         => "required|array",
-            "print_type_id.*"       => "required|integer",
+            "price"                 => "nullable|numeric",
         ]);
 
         if ($request->hasFile('image')) {
@@ -133,38 +80,10 @@ class ItemController extends Controller implements HasMiddleware
         $item->update([
             "name"                  => $request->name,
             "categories_id"         => $request->categories_id,
-            "extra_retail_discount" => $request->extra_retail_discount,
-            "extra_dealer_discount" => $request->extra_dealer_discount,
-            "dealer_current_price"  => $request->dealer_current_price,
-            "retail_current_price"  => $request->retail_current_price,
-            "usd_current_price"     => $request->usd_current_price,
-            "dealer_old_price"      => $request->dealer_old_price,
-            "retail_old_price"      => $request->retail_old_price,
-            "usd_old_price"         => $request->usd_old_price,
-            'local_size_id'         => $request->local_size_id,
-            'export_size_id'        => $request->export_size_id,
-            'export_weight'           => $request->export_weight,
-            'local_weight'            => $request->local_weight,
-            "minimum_qty"           => $request->minimum_qty,
-            "packing"               => $request->packing,
-            "type"                  => $request->type,
-            "active_type"           => $request->active_type,
+            "price"                 => $request->price,
             "image"                 => $image ?? $item->image,
             "created_by"            => auth()->id()
         ]);
-
-        ItemDetail::where('item_id', $item->id)->delete();
-
-        // Handle array inputs
-        foreach ($validated['print_type_id'] as $index => $itemdata) {
-            // Assuming you have a relationship defined on the ItemGroup model to handle these arrays
-            ItemDetail::create([
-                'item_id'       => $item->id,
-                'print_type_id' => $itemdata,
-                'checkbox'      => isset($request->checkbox[$index]) && $request->checkbox[$index] ? '1' : '0',
-                "created_by"    => auth()->id()
-            ]);
-        }
 
         if ($request->ajax()) {
             return $this->withSuccess("Item created successfully");
@@ -177,7 +96,6 @@ class ItemController extends Controller implements HasMiddleware
      */
     public function destroy(Item $item)
     {
-        $item->itemDetails()->delete();
         $item->delete();
         if (request()->ajax()) {
             return $this->withSuccess("Item delete successfully");
@@ -191,20 +109,9 @@ class ItemController extends Controller implements HasMiddleware
         $searchableColumns = [
             'id',
             'name',
-            "extra_retail_discount",
-            'extra_dealer_discount',
+            "price",
             'createdBy:name',
             "categories:name",
-            "type",
-            "active_type",
-            "packing",
-            "minimum_qty",
-            "dealer_current_price",
-            "retail_current_price",
-            "usd_current_price",
-            "dealer_old_price",
-            "retail_old_price",
-            "usd_old_price",
         ];
 
         /* Add Model here with relation */
@@ -212,9 +119,7 @@ class ItemController extends Controller implements HasMiddleware
 
         /* Add Filter here */
         $this->filter([
-            "active_type" => $request->activeType,
             "categories_id" => $request->categories,
-            "type" => $request->itemType,
         ]);
 
 
@@ -224,7 +129,7 @@ class ItemController extends Controller implements HasMiddleware
 
         /* Add Formatting here */
         $this->formateArray(function ($row, $index) use ($editPermission, $deletePermission) {
-            $delete = route("item-master.item.delete", ['item' => $row->id]);
+            $delete = route("master.item.delete", ['item' => $row->id]);
             $action = "";
             $action = " <a class='btn edit-btn  btn-action bg-success text-white mb-1'
                             data-id='{$row->id}'
@@ -254,18 +159,7 @@ class ItemController extends Controller implements HasMiddleware
                 "id"                    => $row->id,
                 "name"                  => $row->name,
                 "categories"            => $row->categories->name ?? '',
-                "extra_retail_discount" => $row->extra_retail_discount,
-                "extra_dealer_discount" => $row->extra_dealer_discount,
-                "type"                  => $row->type,
-                "active_type"           => $row->active_type,
-                "packing"               => $row->packing,
-                "minimum_qty"           => $row->minimum_qty,
-                "dealer_current_price"  => $row->dealer_current_price,
-                "retail_current_price"  => $row->retail_current_price,
-                "usd_current_price"     => $row->usd_current_price,
-                "dealer_old_price"      => $row->dealer_old_price,
-                "retail_old_price"      => $row->retail_old_price,
-                "usd_old_price"         => $row->usd_old_price,
+                "price"                 => $row->price,
                 "action"                => $action,
                 "image"                 => $image,
                 "created_by"            => $row->createdBy?->displayName(),
@@ -279,20 +173,12 @@ class ItemController extends Controller implements HasMiddleware
     public function modelForm(Request $request)
     {
         if ($request->id) {
-            $printTypes  = PrintType::get();
             $categories  = ItemCategory::get();
             $item        = Item::where("id", $request->id)->first();
-            $cartoons = Cartoon::get();
-            foreach ($printTypes as $key => $value) {
-                $itemDetails = ItemDetail::where("item_id", $request->id)->where("print_type_id", $value->id)->first();
-                $value->checkbox = !empty($itemDetails->checkbox) && $itemDetails->checkbox == '1' ? '1' : '0';
-            }
-            return view("Master::item.model", compact("printTypes", "item", "itemDetails", "categories", "cartoons"));
-        } else {
-            $printTypes = PrintType::get();
+            return view("Master::item.model", compact("item", "categories"));
+        }else {
             $categories  = ItemCategory::get();
-            $cartoons = Cartoon::get();
-            return view("Master::item.model", compact("printTypes", "categories", "cartoons"));
+            return view("Master::item.model", compact("categories"));
         }
         return false;
     }
